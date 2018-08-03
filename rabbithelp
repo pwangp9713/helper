@@ -1,0 +1,53 @@
+docker pull registry.docker-cn.com/library/rabbitmq:3-management
+docker run -d -p 5672:5672 -p 15672:15672 --name mq1 c51d1c73d028
+
+netstat -tlnp
+kill 15906
+
+spring.rabbitmq.host=127.0.0.1
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+
+
+@Autowired
+AmqpAdmin a;
+a.declareExchange(new DirectExchange("W1", true, false));
+a.declareQueue(new Queue("W2", true));
+a.declareBinding(new Binding("W2", Binding.DestinationType.QUEUE, "W1", "routingkey", null));
+
+Build Queue First Then send
+
+@Autowired
+RabbitTemplate rt;
+rt.convertAndSend("W1", "routingkey", object);
+rt.receiveAndConvert("W2");
+
+
+
+com.example.demo.config
+@Configuration
+public class MqConfig {
+    @Bean
+    public MessageConverter messageConverter(){
+        return new Jackson2JsonMessageConverter();
+    }
+}
+
+
+com.example.demo.service
+@Component
+public class WMailService {
+    @RabbitListener(queues="W2")
+    public Message recieve(Message m){
+        return m;
+    }
+}
+DemoApplication.java
+@EnableRabbit
+
+
+
+
+
+

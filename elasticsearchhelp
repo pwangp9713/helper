@@ -1,0 +1,39 @@
+docker pull registry.docker-cn.com/library/elasticsearch:2.4.6
+docker run -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -d -p 9200:9200 -p 9300:9300 --name ES01 14f1ca3a6174
+
+<!-- https://mvnrepository.com/artifact/io.searchbox/jest -->
+<dependency>
+    <groupId>io.searchbox</groupId>
+    <artifactId>jest</artifactId>
+    <version>2.4.0</version>
+</dependency>
+
+
+spring.elasticsearch.jest.uris=http://127.0.0.1:9200
+
+
+@JestId
+private Integer id;
+
+
+@Autowired
+JestClient jest;
+
+
+Content c = new Content();
+c.setId(id);
+c.setContent(content);
+Index i0 = new Index.Builder(c).index("cnn").type("content").build();
+jest.execute(i0);
+
+
+
+String json = "{\n"
+                + "    \"query\" : {\n"
+                + "        \"match\" : {\n"
+                + "            \"title\" : \""+title+"\"\n"
+                + "        }\n"
+                + "    }\n"
+                + "}";
+Search s = new Search.Builder(json).addIndex("cnn").addType("article").build();
+SearchResult r = jest.execute(s);

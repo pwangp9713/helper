@@ -1,0 +1,55 @@
+cat /etc/docker/daemon.json 
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+docker pull registry.docker-cn.com/library/zookeeper
+docker run --name zk01 -p 2181:2181 --restart always -d 56d414270ae3
+
+<!--
+<dependency>
+    <groupId>com.alibaba.boot</groupId>
+    <artifactId>dubbo-spring-boot-starter</artifactId>
+    <version>0.1.0</version>
+</dependency>
+-->
+<dependency>
+    <groupId>io.dubbo.springboot</groupId>
+    <artifactId>spring-boot-starter-dubbo</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>com.github.sgroschupf</groupId>
+    <artifactId>zkclient</artifactId>
+    <version>0.1</version>
+</dependency>
+
+
+server
+application.properties
+spring.dubbo.application.name=provider
+spring.dubbo.registry.address=zookeeper://127.0.0.1:2181
+spring.dubbo.protocol.name=dubbo
+spring.dubbo.protocol.port=20880
+spring.dubbo.scan=com.example.demo.mapper
+@Service(version="1.0.0") Must on a ServiceImpl
+
+client
+server.port=8081
+spring.dubbo.application.name=consumer
+spring.dubbo.registry.address=zookeeper://127.0.0.1:2181
+spring.dubbo.scan=com.example.demo.mapper
+@Reference(version="1.0.0") Must in com.example.demo.mapper
+
+
+
+/usr/local/netbeans-8.2/java/maven/conf/settings.xml
+<mirrors>
+
+    <mirror>
+      <id>alimaven</id>
+      <name>aliyun maven</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+      <mirrorOf>central</mirrorOf>        
+    </mirror>
+
+</mirrors>

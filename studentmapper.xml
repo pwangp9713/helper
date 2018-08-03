@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.StudentMapper">
+    <insert id="createstudent" parameterType="Student" useGeneratedKeys="true" keyProperty="sid">
+        insert into Student (sname) values (#{sname})
+    </insert>
+    <select id="selectstudentbyname" resultType="Student">
+        select * from Student where sname = #{sname}
+    </select>
+    <select id="selectstudentbymajor" resultMap="getmajorstudent">
+        select * from Student s, Major m where m.mid=s.mid and m.mname=#{mname}
+    </select>
+    
+    <resultMap type ="com.example.domain.Student" id = "getmajorstudent">
+        <id column = "sid" property = "sid"></id>
+        <result column = "sname" property = "sname"/>
+         <association property = "smajor" javaType = "com.example.domain.Major">
+            <id column = "mid" property = "mid"/>
+            <result column = "mname" property = "mname"/>
+	 </association>
+    </resultMap>
+    
+</mapper>
